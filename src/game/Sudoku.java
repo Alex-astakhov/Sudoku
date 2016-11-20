@@ -10,12 +10,11 @@ import java.util.Scanner;
  * Created by Alex Astakhov on 23.06.2016.
  */
 public class Sudoku {
-    private static char[][] matrix = new char[9][9];
-    private static char[][] ethalon = new char[9][9];
-    private static final String txtFilePath = "Sudoku.txt";
-    private static final String csvFilePath = "Sudoku.csv";
+    private char[][] matrix = new char[9][9];
+    private char[][] ethalon = new char[9][9];
 
-    private static void generateString(int x, int begin){
+
+    private void generateString(int x, int begin){
         char[] mas = {'1', '2', '3', '4', '5', '6', '7', '8', '9', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
         for (int i = 0; i < 9; i++) {
             matrix[x][i] = mas[begin];
@@ -23,7 +22,7 @@ public class Sudoku {
         }
     }
 
-    private static void generateBaseMatrix(){
+    private void generateBaseMatrix(){
         generateString(0, 0);
         generateString(1, 3);
         generateString(2, 6);
@@ -35,7 +34,7 @@ public class Sudoku {
         generateString(8, 8);
     }
 
-    private static void printMatrix(){
+    void printMatrix(){
         System.out.println("-------------------");
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -52,7 +51,7 @@ public class Sudoku {
         }
     }
 
-    private static void writeMatrixToFile(String filePath) throws IOException {
+    void writeMatrixToFile(String filePath) throws IOException {
         List<String> toFile = new ArrayList<>();
 
         toFile.add("-------------------");
@@ -81,7 +80,7 @@ public class Sudoku {
         file.writeToFileLn(filePath, toFile);
     }
 
-    private static void writeMatrixToFileCsv(String filePath) throws IOException {
+    void writeMatrixToFileCsv(String filePath) throws IOException {
         List<String> toFile = new ArrayList<>();
 
         for (int i = 0; i < 9; i++) {
@@ -95,7 +94,7 @@ public class Sudoku {
         file.writeToFileLn(filePath, toFile);
     }
 
-    private static char[][] readTxt(String filepath){
+    char[][] readTxt(String filepath){
         FileIO file = new FileIO();
         char[][] solution = new char[9][9];
         List<String> input = file.readFile(filepath);
@@ -114,7 +113,7 @@ public class Sudoku {
         return solution;
     }
 
-    private static char[][] readCsv(String filepath){
+    char[][] readCsv(String filepath){
         FileIO file = new FileIO();
         char[][] solution = new char[9][9];
         List<String> input = file.readFile(filepath);
@@ -125,7 +124,7 @@ public class Sudoku {
     }
 
 
-    private static void matrixTranspon(){
+    private void matrixTranspon(){
         char[][] buffer = new char[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -139,7 +138,7 @@ public class Sudoku {
         }
     }
 
-    private static void swapStrings(){
+    private void swapStrings(){
         Random rn = new Random();
         int x;
         do {
@@ -155,7 +154,7 @@ public class Sudoku {
         }
     }
 
-    private static void swapCols(){
+    private void swapCols(){
         Random rn = new Random();
         int y;
         do {
@@ -170,7 +169,7 @@ public class Sudoku {
         }
     }
 
-    private static void swapStringsArea(){
+    private void swapStringsArea(){
         Random rn = new Random();
         int x = rn.nextInt(2) * 3;
         char swap;
@@ -183,7 +182,7 @@ public class Sudoku {
         }
     }
 
-    private static void swapColsArea(){
+    private void swapColsArea(){
         Random rn = new Random();
         int x = rn.nextInt(2) * 3;
         char swap;
@@ -196,7 +195,7 @@ public class Sudoku {
         }
     }
 
-    private static void swaper(int var){
+    private void swaper(int var){
         switch (var){
             case 0:
                 matrixTranspon();
@@ -216,7 +215,18 @@ public class Sudoku {
         }
     }
 
-    private static void saveEthalon(){
+    void generateSudoku(int difficulty){
+        generateBaseMatrix();
+        Random rn = new Random();
+        for (int i = 0; i < 10; i++) {
+            int n = rn.nextInt(5);
+            swaper(n);
+        }
+        saveEthalon();
+        hide(difficulty);
+    }
+
+    private void saveEthalon(){
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 ethalon[i][j] = matrix[i][j];
@@ -224,7 +234,7 @@ public class Sudoku {
         }
     }
 
-    private static void hide(int difficulty){
+    private void hide(int difficulty){
         Random rn = new Random();
         for (int i = 0; i < 8; i+=3) {
             for (int j = 0; j < 8; j+=3) {
@@ -237,7 +247,7 @@ public class Sudoku {
         }
     }
 
-    private static boolean validateSolution(char[][] solution){
+    boolean validateSolution(char[][] solution){
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (solution[i][j] != ethalon[i][j]){
@@ -248,62 +258,5 @@ public class Sudoku {
         return true;
     }
 
-    public static void main(String[] args) throws IOException {
-        generateBaseMatrix();
-        Random rn = new Random();
-        for (int i = 0; i < 10; i++) {
-            int n = rn.nextInt(5);
-            swaper(n);
-        }
-        saveEthalon();
-        //printMatrix();
-        System.out.println("Выберите сложность:");
-        System.out.println("1 - легкий");
-        System.out.println("2 - средний");
-        System.out.println("3 - сложный");
-        System.out.println("0 - показать полностью");
-        Scanner sc = new Scanner(System.in);
-        int choise = sc.nextInt();
-        switch (choise){
-            case 0:
-                break;
-            case 1:
-                hide(4);
-                break;
-            case 2:
-                hide(5);
-                break;
-            case 3:
-                hide(6);
-                break;
-            default:
-                System.out.println("Неверный выбор!");
-        }
-        printMatrix();
-        writeMatrixToFile(txtFilePath);
-        writeMatrixToFileCsv(csvFilePath);
-        System.out.println("Проверить правильность решения? (y/n): ");
-        String answer = sc.next();
-        if (answer.toLowerCase().equals("y")){
-            System.out.println("1. CSV");
-            System.out.println("2. TXT");
-            System.out.println("Какой файл проверить? ");
-            choise = sc.nextInt();
-            boolean correct = false;
-            switch (choise){
-                case 1:
-                    correct = validateSolution(readCsv(csvFilePath));
-                    break;
-                case 2:
-                    correct = validateSolution(readTxt(txtFilePath));
-                    break;
-            }
-            if (correct){
-                System.out.println("РЕШЕНИЕ ВЕРНО!");
-            }
-            else{
-                System.out.println("РЕШЕНИЕ НЕВЕРНО!");
-            }
-        }
-    }
+
 }
