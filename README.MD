@@ -1,0 +1,1 @@
+Sudoku generator and Sudoku validator. Works with TXT and CSV files.
